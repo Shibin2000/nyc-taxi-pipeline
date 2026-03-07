@@ -12,7 +12,7 @@ default_args = {
     "email_on_failure": False,
 }
 
-# jan 2024 - picked this month randomly, seemed to have good data
+# jan 2024 data from TLC
 PARQUET_URL  = "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_2024-01.parquet"
 TLC_ZONE_URL = "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv"
 DB_PATH      = "/opt/airflow/data/nyc_taxi_warehouse.db"
@@ -154,6 +154,7 @@ with DAG(
     t5 = PythonOperator(task_id="data_quality_checks", python_callable=data_quality_checks)
 
     t1 >> t2 >> t3 >> t4 >> t5
+
 
 
 
