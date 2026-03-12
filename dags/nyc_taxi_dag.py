@@ -35,7 +35,7 @@ def transform_clean(**ctx):
         "PULocationID", "DOLocationID",
     ]].copy()
     df = df[
-        # also filtering trip_duration < 120 mins, anything longer is probably a meter left running
+        # also drop trips > 2hrs, probably meter left running
         (df["trip_distance"] > 0) & (df["fare_amount"] > 0) &
         (df["total_amount"] > 0) & (df["passenger_count"] > 0)
     ].dropna()
@@ -154,6 +154,7 @@ with DAG(
     t5 = PythonOperator(task_id="data_quality_checks", python_callable=data_quality_checks)
 
     t1 >> t2 >> t3 >> t4 >> t5
+
 
 
 
