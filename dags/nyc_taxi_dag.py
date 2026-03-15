@@ -71,7 +71,7 @@ def build_star_schema(**ctx):
         "passenger_count", "trip_distance", "fare_amount",
         "tip_amount", "total_amount", "trip_duration_mins", "payment_type",
     ]].copy()
-    # itertuples on 3M rows was causing the dag to exceed the default task timeout
+    # was using itertuples() which is slow on 3M rows, switched to vectorized
     # switched to vectorized after noticing the dag was timing out
     # vectorized surrogate key — much faster than itertuples() on millions of rows
     fact_trips["trip_id"] = (
@@ -154,6 +154,7 @@ with DAG(
     t5 = PythonOperator(task_id="data_quality_checks", python_callable=data_quality_checks)
 
     t1 >> t2 >> t3 >> t4 >> t5
+
 
 
 
