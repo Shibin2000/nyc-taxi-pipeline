@@ -113,7 +113,7 @@ def spark_analysis(**ctx):
     df = pd.read_parquet(CLEAN_PATH)
     spark_df = spark.createDataFrame(df)
     spark_df.createOrReplaceTempView("taxi_trips")
-    # runs in local mode, set shuffle.partitions=4 to avoid 200-partition overhead
+    # local mode, shuffle.partitions=4 otherwise spark makes 200 partitions which is overkill
     spark.sql("SELECT pickup_hour, COUNT(*) as trips, ROUND(AVG(fare_amount),2) as avg_fare FROM taxi_trips GROUP BY pickup_hour ORDER BY trips DESC LIMIT 5").show()
     spark.sql("SELECT payment_type_name, COUNT(*) as trips, ROUND(SUM(total_amount),2) as revenue FROM taxi_trips GROUP BY payment_type_name ORDER BY revenue DESC").show()
     spark.stop()
@@ -154,6 +154,7 @@ with DAG(
     t5 = PythonOperator(task_id="data_quality_checks", python_callable=data_quality_checks)
 
     t1 >> t2 >> t3 >> t4 >> t5
+
 
 
 
