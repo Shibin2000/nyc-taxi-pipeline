@@ -144,7 +144,7 @@ with DAG(
     schedule_interval=timedelta(days=1),
     start_date=datetime(2026, 3, 17),
     catchup=False,
-    tags=["nyc", "taxi", "etl", "duckdb"],  # added pyspark tag after adding spark_analysis task
+    tags=["nyc", "taxi", "etl", "duckdb", "pyspark"],
 ) as dag:
 
     t1 = PythonOperator(task_id="extract_taxi_data",   python_callable=extract_taxi_data)
@@ -154,6 +154,7 @@ with DAG(
     t5 = PythonOperator(task_id="data_quality_checks", python_callable=data_quality_checks)
 
     t1 >> t2 >> t3 >> t4 >> t5
+
 
 
 
